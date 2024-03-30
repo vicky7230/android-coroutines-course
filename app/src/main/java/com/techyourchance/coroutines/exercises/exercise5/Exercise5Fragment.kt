@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import com.techyourchance.coroutines.R
 import com.techyourchance.coroutines.common.BaseFragment
 import com.techyourchance.coroutines.common.ThreadInfoLogger
+import com.techyourchance.coroutines.demonstrations.design.BenchmarkUseCase
 import com.techyourchance.coroutines.exercises.exercise1.GetReputationEndpoint
 import com.techyourchance.coroutines.home.ScreenReachableFromHome
 import kotlinx.coroutines.*
@@ -28,12 +29,15 @@ class Exercise5Fragment : BaseFragment() {
 
 
     private lateinit var getReputationEndpoint: GetReputationEndpoint
+    private lateinit var getReputationUseCase2: GetReputationUseCase2
 
     private var job: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         getReputationEndpoint = compositionRoot.getReputationEndpoint
+        getReputationUseCase2 = compositionRoot.getReputationUseCase2
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -57,7 +61,7 @@ class Exercise5Fragment : BaseFragment() {
             logThreadInfo("button callback")
             job = coroutineScope.launch {
                 btnGetReputation.isEnabled = false
-                val reputation = getReputationForUser(edtUserId.text.toString())
+                val reputation = getReputationUseCase2.getReputationForUser(edtUserId.text.toString(), getReputationEndpoint)
                 Toast.makeText(requireContext(), "reputation: $reputation", Toast.LENGTH_SHORT).show()
                 btnGetReputation.isEnabled = true
             }
@@ -72,20 +76,13 @@ class Exercise5Fragment : BaseFragment() {
         btnGetReputation.isEnabled = true
     }
 
-    private suspend fun getReputationForUser(userId: String): Int {
-        return withContext(Dispatchers.Default) {
-            logThreadInfo("getReputationForUser()")
-            getReputationEndpoint.getReputation(userId)
+    companion object {
+        fun newInstance(): Fragment {
+            return Exercise5Fragment()
         }
     }
 
     private fun logThreadInfo(message: String) {
         ThreadInfoLogger.logThreadInfo(message)
-    }
-
-    companion object {
-        fun newInstance(): Fragment {
-            return Exercise5Fragment()
-        }
     }
 }
