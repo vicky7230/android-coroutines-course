@@ -6,6 +6,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.TestCoroutineDispatcher
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runBlockingTest
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.hamcrest.CoreMatchers
 import org.hamcrest.CoreMatchers.`is`
@@ -39,15 +40,31 @@ class FactorialUseCaseTest {
     }
 
     @Test
-    fun computeFactorial_1_returns1() {
+    fun computeFactorial_1_returns1() = runBlocking{
+        // Arrange
+        // Act
+        val result = SUT.computeFactorial(1, 1000)
+        // Assert
+        assertThat((result as FactorialUseCase.Result.Success).result, `is`(BigInteger("1")))
     }
 
     @Test
-    fun computeFactorial_10_returnsCorrectAnswer() {
+    fun computeFactorial_10_returnsCorrectAnswer() = runBlocking{
+
+        // Arrange
+        // Act
+        val result = SUT.computeFactorial(10, 1000)
+        // Assert
+        assertThat((result as FactorialUseCase.Result.Success).result, `is`(BigInteger("3628800")))
     }
 
     @Test
-    fun computeFactorial_30_returnsCorrectAnswer() {
+    fun computeFactorial_30_returnsCorrectAnswer() = runBlocking{
+        // Arrange
+        // Act
+        val result = SUT.computeFactorial(30, 1000)
+        // Assert
+        assertThat((result as FactorialUseCase.Result.Success).result, `is`(BigInteger("265252859812191058636308480000000")))
     }
 
 
