@@ -5,7 +5,7 @@ import com.techyourchance.coroutines.common.ThreadInfoLogger.logThreadInfo
 import kotlinx.coroutines.*
 import kotlin.coroutines.coroutineContext
 
-class BlockingBenchmarkUseCase {
+class  BlockingBenchmarkUseCase {
 
     suspend fun executeBenchmark(benchmarkDurationSeconds: Int): Long {
         logThreadInfo("benchmark started")

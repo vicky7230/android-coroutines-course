@@ -25,14 +25,16 @@ class Exercise6Fragment : BaseFragment() {
     private lateinit var btnStart: Button
     private lateinit var txtRemainingTime: TextView
 
-    private var hasBenchmarkBeenStartedOnce = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         benchmarkUseCase = compositionRoot.exercise6BenchmarkUseCase
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         val view = inflater.inflate(R.layout.fragment_exercise_6, container, false)
 
         txtRemainingTime = view.findViewById(R.id.txt_remaining_time)
@@ -48,13 +50,16 @@ class Exercise6Fragment : BaseFragment() {
             }
 
             coroutineScope.launch {
-                btnStart.isEnabled = false
-                val iterationsCount = benchmarkUseCase.executeBenchmark(benchmarkDurationSeconds)
-                Toast.makeText(requireContext(), "$iterationsCount", Toast.LENGTH_SHORT).show()
-                btnStart.isEnabled = true
+                try {
+                    btnStart.isEnabled = false
+                    val iterationsCount = benchmarkUseCase.executeBenchmark(benchmarkDurationSeconds)
+                    Toast.makeText(requireContext(), "$iterationsCount", Toast.LENGTH_SHORT).show()
+                    btnStart.isEnabled = true
+                } catch (cancellationException: CancellationException) {
+                    btnStart.isEnabled = true
+                    txtRemainingTime.text = "done!"
+                }
             }
-
-            hasBenchmarkBeenStartedOnce = true
         }
 
         return view
@@ -64,10 +69,6 @@ class Exercise6Fragment : BaseFragment() {
         logThreadInfo("onStop()")
         super.onStop()
         coroutineScope.coroutineContext.cancelChildren()
-        if (hasBenchmarkBeenStartedOnce) {
-            btnStart.isEnabled = true
-            txtRemainingTime.text = "done!"
-        }
     }
 
 
